@@ -53,6 +53,7 @@ def main():
     )
     encode_parser.add_argument('data', type=str, help='Data to encode')
     encode_parser.add_argument('type', type=str, choices=['base64', 'urlencode'], help='Type of encoding')
+    encode_parser.set_defaults(func=encode_data)
 
     # Subparser for hashing
     hash_parser = subparsers.add_parser(
@@ -60,12 +61,13 @@ def main():
         help="Hash data using a specified algorithm",
         description="Hash data using a specified algorithm such as MD5, SHA-1, or SHA-256.",
         epilog="Examples:\n"
-               "  python3 cli.py hash 'data' md5\n"
-               "  python3 cli.py hash 'data' sha1\n"
-               "  python3 cli.py hash 'data' sha256\n"
+               "  python3 cli.py hash md5 'data'\n"
+               "  python3 cli.py hash sha1 'data'\n"
+               "  python3 cli.py hash sha256 'data'\n"
     )
     hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256'], help='Type of hash')
     hash_parser.add_argument('data', type=str, help='Data to hash')
+    hash_parser.set_defaults(func=hash_data)
 
     args = parser.parse_args()
     if hasattr(args, 'func'):
