@@ -101,13 +101,16 @@ def hash_data(args):
     else:
         print(f"Hash type {args.type} not implemented.")
 
-def encrypt_data(data, key):
+def encrypt_data(args):
+    data = args.data
+    key = args.key
+
     # Convert strings to bytes
     data_bytes = data.encode('utf-8')
     key_bytes = key.encode('utf-8')
 
     # Ensure key is 16 bytes (AES-128), 24 bytes (AES-192), or 32 bytes (AES-256)
-    key_bytes = pad(key_bytes, AES.block_size)
+    key_bytes = pad(key_bytes, 32)
 
     # Create AES Cipher
     cipher = AES.new(key_bytes, AES.MODE_CBC)
@@ -119,9 +122,13 @@ def encrypt_data(data, key):
     iv = base64.b64encode(cipher.iv).decode('utf-8')
     ct = base64.b64encode(ct_bytes).decode('utf-8')
 
-    return iv, ct
+    print(f"IV: {iv}\nCipher Text: {ct}")
 
-def decrypt_data(iv, ct, key):
+def decrypt_data(args):
+    iv = args.iv
+    ct = args.data
+    key = args.key
+
     # Convert base64 strings and key to bytes
     iv_bytes = base64.b64decode(iv)
     ct_bytes = base64.b64decode(ct)
@@ -136,7 +143,7 @@ def decrypt_data(iv, ct, key):
     # Decrypt and unpad
     pt_bytes = unpad(cipher.decrypt(ct_bytes), AES.block_size)
 
-    return pt_bytes.decode('utf-8')
+    print(f"Plain Text: {pt_bytes.decode('utf-8')}")
 
 def main():
     parser = argparse.ArgumentParser(description="SecShell - Security CLI Tool")
@@ -164,13 +171,14 @@ def main():
     hash_parser.set_defaults(func=hash_data)
 
     # Subparser for encryption
-    encrypt_parser = parser.add_subparsers().add_parser('encrypt', help='Encrypt data')
+    encrypt_parser = subparsers.add_parser('encrypt', help='Encrypt data')
     encrypt_parser.add_argument('data', type=str, help='Data to encrypt')
     encrypt_parser.add_argument('key', type=str, help='Encryption key')
     encrypt_parser.set_defaults(func=encrypt_data)
 
     # Subparser for decryption
-    decrypt_parser = parser.add_subparsers().add_parser('decrypt', help='Decrypt data')
+    decrypt_parser = subparsers.add_parser('decrypt', help='Decrypt data')
+    decrypt_parser.add_argument('iv', type=str, help='Initialization Vector')
     decrypt_parser.add_argument('data', type=str, help='Data to decrypt')
     decrypt_parser.add_argument('key', type=str, help='Decryption key')
     decrypt_parser.set_defaults(func=decrypt_data)
