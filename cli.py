@@ -45,7 +45,7 @@ def decode_data(args):
         decoded_data = base64.b64decode(data).decode('utf-8')
         print(decoded_data)
     elif args.type == 'base32':
-        decoded_data = base64.b32decode(data).decode('utf-u')
+        decoded_data = base64.b32decode(data).decode('utf-8')
         print(decoded_data)
     elif args.type == 'base85':
         decoded_data = base64.b85decode(data).decode('utf-8')
