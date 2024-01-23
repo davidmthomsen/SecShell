@@ -51,8 +51,8 @@ def main():
                "  python3 cli.py encode 'data' base64\n"
                "  python3 cli.py encode 'https://example.com' urlencode\n"
     )
-    encode_parser.add_argument('data', type=str, help='Data to encode')
     encode_parser.add_argument('type', type=str, choices=['base64', 'urlencode'], help='Type of encoding')
+    encode_parser.add_argument('data', type=str, help='Data to encode')
     encode_parser.set_defaults(func=encode_data)
 
     # Subparser for hashing
