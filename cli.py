@@ -14,6 +14,16 @@ def encode_data(data, encoding_type):
     else:
         print(f"Encoding type {encoding_type} is not implemented.")
 
+def decode_data(data, decoding_type):
+    if decoding_type == 'base64':
+        decoded_data = base64.b64decode(data).decode('utf-8')
+        print(decoded_data)
+    elif decoding_type == 'urlencode':
+        decoded_data = urllib.parse.unquote_plus(data)
+        print(decoded_data)
+    else:
+        print(f"Decoding type {decoding_type} is not implemented.")
+
 def hash_data(data, hash_type):
     data_bytes = data.encode('utf-8')
 
@@ -35,9 +45,9 @@ def main():
     parser = argparse.ArgumentParser(
         description="SecShell - Security CLI Tool",
         epilog="Examples:\n"
-               " python3 cli.py encode 'data' base64\n"
-               " python3 cli.py hash 'data' sha256\n"
-               " python3 cli.py encode 'https://example.com' urlencode\n",
+               " python3 cli.py encode base64 'data'\n"
+               " python3 cli.py hash sha256 'data'\n"
+               " python3 cli.py encode urlencode 'https://example.com'\n",
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
     subparsers = parser.add_subparsers(dest="command")
@@ -48,12 +58,25 @@ def main():
         help="Encode data in a specified format",
         description="Encode data in a specified format such as Base64 or URL encoding.",
         epilog="Examples:\n"
-               "  python3 cli.py encode 'data' base64\n"
-               "  python3 cli.py encode 'https://example.com' urlencode\n"
+               "  python3 cli.py encode base64 'data'\n"
+               "  python3 cli.py encode urlencode 'https%3A%2F%2Fexample%2Ecom'\n"
     )
     encode_parser.add_argument('type', type=str, choices=['base64', 'urlencode'], help='Type of encoding')
     encode_parser.add_argument('data', type=str, help='Data to encode')
     encode_parser.set_defaults(func=encode_data)
+
+    # Subparser for decoding
+    decode_parser = subparsers.add_parser(
+        "decode",
+        help="Decoding data in a specified format",
+        description="Decode data in a specified format such as Base64 or URL encoding.",
+        epilog="Examples:\n"
+        "  python3 cli.py decode base64 'data'\n"
+        "  python3 cli.py decode urlencode 'https%3A%2F%2Fexample%2Ecom'"
+    )
+    decode_parser.add_argument('type', type=str, choices=['base64', 'urlencode'], help='Type of encoding to decode')
+    decode_parser.add_argument('data', type=str, help='Data to decode')
+    decode_parser.set_defaults(func=decode_data)
 
     # Subparser for hashing
     hash_parser = subparsers.add_parser(
