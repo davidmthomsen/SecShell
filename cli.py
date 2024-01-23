@@ -2,6 +2,7 @@ import argparse
 import base64
 import hashlib
 import urllib.parse
+import sys
 
 
 def encode_data(data, encoding_type):
@@ -93,6 +94,10 @@ def main():
     hash_parser.set_defaults(func=hash_data)
 
     args = parser.parse_args()
+    if not sys.stdin.isatty(): # Check if data is being piped into stdin
+        input_data = sys.stdin.read().strip()
+        args.data = input_data  # Use data from stdin
+        
     if hasattr(args, 'func'):
         args.func(args.data, args.type)
     else:
