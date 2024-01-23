@@ -64,8 +64,8 @@ def main():
                "  python3 cli.py hash 'data' sha1\n"
                "  python3 cli.py hash 'data' sha256\n"
     )
-    hash_parser.add_argument('data', type=str, help='Data to hash')
     hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256'], help='Type of hash')
+    hash_parser.add_argument('data', type=str, help='Data to hash')
 
     args = parser.parse_args()
     if hasattr(args, 'func'):
