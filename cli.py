@@ -6,6 +6,10 @@ import sys
 
 
 def encode_data(data, encoding_type):
+    # Check if data is None, which indicates it should be read from stdin
+    if data is None:
+        data = sys.stdin.read().strip()
+
     if encoding_type == 'base64':
         encoded_data = base64.b64encode(data.encode('utf-8'))  # Encode string to bytes
         print(encoded_data.decode('utf-8'))  # Decode bytes to string for display
@@ -16,6 +20,10 @@ def encode_data(data, encoding_type):
         print(f"Encoding type {encoding_type} is not implemented.")
 
 def decode_data(data, decoding_type):
+    # Check if data is None, which indicates it should be read from stdin
+    if data is None:
+        data = sys.stdin.read().strip()
+
     if decoding_type == 'base64':
         decoded_data = base64.b64decode(data).decode('utf-8')
         print(decoded_data)
@@ -27,6 +35,9 @@ def decode_data(data, decoding_type):
 
 def hash_data(data, hash_type):
     data_bytes = data.encode('utf-8')
+    # Check is data is None, which indicates it should be read from stdin
+    if data is None:
+        data = sys.stdin.read().strip()
 
     # Function to handle data hashing 
     if hash_type == 'sha256':
@@ -97,7 +108,7 @@ def main():
     if not sys.stdin.isatty(): # Check if data is being piped into stdin
         input_data = sys.stdin.read().strip()
         args.data = input_data  # Use data from stdin
-        
+
     if hasattr(args, 'func'):
         args.func(args.data, args.type)
     else:
