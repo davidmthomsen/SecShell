@@ -19,7 +19,6 @@ def hash_data(data, hash_type):
         print(hex_dig)
     else:
         print(f"Hash type {hash_type} not implemented.")
-    pass
 
 def main():
     parser = argparse.ArgumentParser(description="SecShell  - Security CLI Tool")
@@ -33,22 +32,18 @@ def main():
 
     # Subarser for hashing 
     hash_parser = subparsers.add_parser("hash")
-    hash_parser.add_argument("type", choices=["md5", "sha1", "sha256"])
-    hash_parser.add_argument("data")
+    hash_parser.add_argument('data', type=str, help='Data to hash')
+    hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256'], help='Type of hash')
     hash_parser.set_defaults(func=hash_data)
+
 
     # Add more subparsers as needed
 
     args = parser.parse_args()
     if hasattr(args, 'func'):
-        args.func(args.data, args.type)
+        args.func(args.data, args.type) # Call the function passed by set_defaults
     else:
         parser.print_help()
 
 if __name__ == "__main__":
-    args = parser.parse_args()
-    if 'func' in args:
-        args.func(args.data, args.type) # Call function passed by set_defaults
-    else:
-        parser.print_help()
     main()
