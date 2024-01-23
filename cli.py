@@ -19,7 +19,7 @@ def hash_data(data, hash_type):
 
     # Function to handle data hashing 
     if hash_type == 'sha256':
-        hash_object = hashlib.sha256(data.encode('utf-8')) # Hashing requires encode bytes
+        hash_object = hashlib.sha256(data_bytes) # Hashing requires encode bytes
         hex_dig = hash_object.hexdigest() # Get hexadecimal digest string
         print(hex_dig)
     elif hash_type == 'md5':
