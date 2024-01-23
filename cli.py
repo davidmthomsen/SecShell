@@ -1,5 +1,6 @@
 import argparse
 import base64
+import binascii
 import hashlib
 from Crypto.Hash import RIPEMD160
 import urllib.parse
@@ -22,6 +23,18 @@ def encode_data(args):
     elif args.type == 'urlencode':
         encoded_data = urllib.parse.quote_plus(data)
         print(encoded_data)
+    elif args.type == 'hex':
+        encoded_data = binascii.hexlify(data.encode('utf-8'))
+        print(encode_data.decode('utf-8'))
+    elif args.type == 'base32':
+        encoded_data = base64.b32encode(data.encode('utf-8'))
+        print(encoded_data.decode('utf-8'))
+    elif args.type == 'ascii85':
+        encoded_data = base64.a85encode(data.encode('utf-8'))
+        print(encoded_data.decode('utf-8'))
+    elif args.type == 'base85':
+        encoded_data = base64.b85encode(data.encode('utf-8'))
+        print(encoded_data.decode('utf-8'))
     else:
         print(f"Encoding type {args.type} is not implemented.")
 
@@ -79,9 +92,10 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     # Subparser for encoding
-    encode_parser = subparsers.add_parser("encode", help="Encode data in a specified format")
-    encode_parser.add_argument('type', type=str, choices=['base64', 'urlencode'])
-    encode_parser.add_argument('data', nargs='?', type=str)
+    encode_parser = subparsers.add_parser("encode", help="Encode data in a specified format",
+                                          description="Encode data in various formats like Base64, URL, Hex, Base32, ASCII85, or Base85.")
+    encode_parser.add_argument('type', type=str, choices=['base64', 'urlencode', 'hex', 'base32', 'ascii85', 'base85'], help='Type of encoding')
+    encode_parser.add_argument('data', nargs='?', type=str, help='Data to encode')
     encode_parser.set_defaults(func=encode_data)
 
     # Subparser for decoding
