@@ -1,6 +1,9 @@
 import argparse
 import base64
 import binascii
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
+from Crypto.Util.Padding import pad, unpad
 import hashlib
 from Crypto.Hash import RIPEMD160
 import urllib.parse
@@ -98,6 +101,43 @@ def hash_data(args):
     else:
         print(f"Hash type {args.type} not implemented.")
 
+def encrypt_data(data, key):
+    # Convert strings to bytes
+    data_bytes = data.encode('utf-8')
+    key_bytes = key.encode('utf-8')
+
+    # Ensure key is 16 bytes (AES-128), 24 bytes (AES-192), or 32 bytes (AES-256)
+    key_bytes = pad(key_bytes, AES.block_size)
+
+    # Create AES Cipher
+    cipher = AES.new(key_bytes, AES.MODE_CBC)
+
+    # Pad data and encrypt
+    ct_bytes = cipher.encrypt(pad(data_bytes, AES.block_size))
+
+    # Encode the IV and ciphertext to base64 for easy storage/transmission 
+    iv = base64.b64encode(cipher.iv).decode('utf-8')
+    ct = base64.b64encode(ct_bytes).decode('utf-8')
+
+    return iv, ct
+
+def decrypt_data(iv, ct, key):
+    # Convert base64 strings and key to bytes
+    iv_bytes = base64.b64decode(iv)
+    ct_bytes = base64.b64decode(ct)
+    key_bytes = key.encode('utf-8')
+
+    # Ensure key is of proper length
+    key_bytes = pad(key_bytes, AES.block_size)
+
+    # Create AES cipher
+    cipher = AES.new(key_bytes, AES.MODE_CBC, iv=iv_bytes)
+
+    # Decrypt and unpad
+    pt_bytes = unpad(cipher.decrypt(ct_bytes), AES.block_size)
+
+    return pt_bytes.decode('utf-8')
+
 def main():
     parser = argparse.ArgumentParser(description="SecShell - Security CLI Tool")
     parser.add_argument('-f', '--file', type=str, help='Path to a file containing data')
@@ -122,6 +162,19 @@ def main():
     hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256', 'ripemd160','blake2s', 'blake2b', 'sha3_512', 'sha3_256'], help='Type of hash')
     hash_parser.add_argument('data', nargs='?', type=str, help='Data to hash')
     hash_parser.set_defaults(func=hash_data)
+
+    # Subparser for encryption
+    encrypt_parser = parser.add_subparsers().add_parser('encrypt', help='Encrypt data')
+    encrypt_parser.add_argument('data', type=str, help='Data to encrypt')
+    encrypt_parser.add_argument('key', type=str, help='Encryption key')
+    encrypt_parser.set_defaults(func=encrypt_data)
+
+    # Subparser for decryption
+    decrypt_parser = parser.add_subparsers().add_parser('decrypt', help='Decrypt data')
+    decrypt_parser.add_argument('data', type=str, help='Data to decrypt')
+    decrypt_parser.add_argument('key', type=str, help='Decryption key')
+    decrypt_parser.set_defaults(func=decrypt_data)
+
 
     args = parser.parse_args()
 
