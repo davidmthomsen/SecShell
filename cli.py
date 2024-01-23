@@ -25,7 +25,7 @@ def encode_data(args):
         print(encoded_data)
     elif args.type == 'hex':
         encoded_data = binascii.hexlify(data.encode('utf-8'))
-        print(encode_data.decode('utf-8'))
+        print(encoded_data.decode('utf-8'))
     elif args.type == 'base32':
         encoded_data = base64.b32encode(data.encode('utf-8'))
         print(encoded_data.decode('utf-8'))
@@ -43,6 +43,18 @@ def decode_data(args):
 
     if args.type == 'base64':
         decoded_data = base64.b64decode(data).decode('utf-8')
+        print(decoded_data)
+    elif args.type == 'base32':
+        decoded_data = base64.b32decode(data).decode('utf-u')
+        print(decoded_data)
+    elif args.type == 'base85':
+        decoded_data = base64.b85decode(data).decode('utf-8')
+        print(decode_data)
+    elif args.type == 'ascii85':
+        decoded_data = base64.a85decode(data).decode('utf-8')
+        print(decoded_data)
+    elif args.type == 'hex':
+        decoded_data = binascii.unhexlify(data).decode('utf-8')
         print(decoded_data)
     elif args.type == 'urlencode':
         decoded_data = urllib.parse.unquote_plus(data)
@@ -100,7 +112,7 @@ def main():
 
     # Subparser for decoding
     decode_parser = subparsers.add_parser("decode", help="Decode data in a specified format")
-    decode_parser.add_argument('type', type=str, choices=['base64', 'urlencode'])
+    decode_parser.add_argument('type', type=str, choices=['base64', 'urlencode', 'base32', 'base85', 'ascii85', 'hex'])
     decode_parser.add_argument('data', nargs='?', type=str)
     decode_parser.set_defaults(func=decode_data)
 
