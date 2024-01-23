@@ -96,9 +96,10 @@ def main():
     decode_parser.set_defaults(func=decode_data)
 
     # Subparser for hashing
-    hash_parser = subparsers.add_parser("hash", help="Hash data using a specified algorithm")
-    hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256'])
-    hash_parser.add_argument('data', nargs='?', type=str)
+    hash_parser = subparsers.add_parser("hash", help="Hash data using a specified algorithm",
+                                                description="Hash data using a specified algorithm such as MD5, SHA-1, SHA-256, RIPEMD-160, or Whirlpool.")
+    hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256', 'ripemd160', 'whirlpool'], help='Type of hash')
+    hash_parser.add_argument('data', nargs='?', type=str, help='Data to hash')
     hash_parser.set_defaults(func=hash_data)
 
     args = parser.parse_args()
