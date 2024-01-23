@@ -2,7 +2,6 @@ import argparse
 import base64
 import hashlib
 from Crypto.Hash import RIPEMD160
-from Crypto.Hash import Whirlpool
 import urllib.parse
 import sys
 
@@ -68,10 +67,6 @@ def hash_data(args):
     elif args.type == 'blake2s':
         hash_object = hashlib.blake2s(data_bytes)
         print(hash_object.hexdigest())
-    elif args.type == 'whirlpool':
-        hash_object = Whirlpool.new()
-        hash_object.update(data_bytes)
-        print(hash_object.hexdigest())
     elif args.type == 'ripemd160':
         hash_object = hashlib.new('ripemd160', data_bytes)
         print(hash_object.hexdigest())
@@ -97,8 +92,8 @@ def main():
 
     # Subparser for hashing
     hash_parser = subparsers.add_parser("hash", help="Hash data using a specified algorithm",
-                                                description="Hash data using a specified algorithm such as MD5, SHA-1, SHA-256, RIPEMD-160, or Whirlpool.")
-    hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256', 'ripemd160', 'whirlpool'], help='Type of hash')
+                                                description="Hash data using a specified algorithm such as MD5, SHA-1, SHA-256, or RIPEMD-160")
+    hash_parser.add_argument('type', type=str, choices=['md5', 'sha1', 'sha256', 'ripemd160','blake2s', 'blake2b', 'sha3_512', 'sha3_256'], help='Type of hash')
     hash_parser.add_argument('data', nargs='?', type=str, help='Data to hash')
     hash_parser.set_defaults(func=hash_data)
 
